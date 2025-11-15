@@ -1,0 +1,61 @@
+# Large data files (too big for GitHub)
+data/raw/*.fastq.gz
+data/raw/*.fastq
+data/clean/*.fastq.gz
+data/clean/*.fastq
+data/raw/*.fq.gz
+data/raw/*.fq
+
+# Large assembly files
+results/assembly/*.fastg
+results/assembly/K*/
+results/assembly/tmp/
+results/assembly/corrected/
+results/assembly/misc/
+
+# Binary files
+*.bam
+*.sam
+*.bai
+
+# Database files
+data/databases/*.dmnd
+data/databases/*.faa
+data/databases/*.pin
+data/databases/*.phr
+data/databases/*.psq
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+
+# Logs
+*.log
+logs/*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Conda environment
+.conda/
+*.egg-info/
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Keep these important files (use ! to negate ignore)
+!environment.yml
+!README.md
+!LICENSE
+
+# Large database files (>100MB)
+data/databases/**/*.dmnd
+data/databases/**/*.faa.gz

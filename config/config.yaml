@@ -1,0 +1,37 @@
+# Bat Coronavirus Surveillance Pipeline Configuration
+# Author: Dr. Oluwamayowa Joshua Ogun
+# Date: November 2025
+
+# Sample information
+sample_id: "SRR10903401"
+
+# Computational resources
+threads: 4
+memory_gb: 16
+
+# Reference files and databases
+adapters: "/path/to/adapters.fa"  # Update with actual path
+blast_database: "data/databases/viral_proteins"  # Update with actual path
+phylo_sequences: "results/phylogenetics/all_spike_sequences_16.faa"
+
+# Quality control parameters
+qc:
+  min_quality: 20
+  min_length: 36
+
+# Assembly parameters
+assembly:
+  kmer_sizes: [21, 33, 55, 77]
+  coverage_cutoff: "auto"
+
+# Annotation parameters
+annotation:
+  evalue: 1e-5
+  max_target_seqs: 5
+
+# Phylogenetic parameters
+phylogenetics:
+  alignment_method: "mafft"
+  tree_method: "iqtree"
+  bootstrap: 1000
+  model: "Blosum62+F+G4"
