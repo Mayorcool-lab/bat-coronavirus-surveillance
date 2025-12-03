@@ -27,7 +27,7 @@
 ### Selection Analysis
 - ✅ **RBD conservation:** 91% (203/223 amino acid positions)
 - ✅ **Variable sites identified:** 20 positions (9%)
-- ✅ **Key hotspot:** Position 498 (Shannon entropy = 1.01)
+- ✅ **Key hotspot:** Position 497 (Shannon entropy = 1.014)
 - ✅ **Validation:** Matches Omicron variant Q498R mutation site
 
 ---
@@ -217,7 +217,7 @@ The Snakemake workflow automates all 10 pipeline steps:
 ### 2. Selection Analysis Results
 ![Selection Analysis](results/phylogenetics/selection_analysis/selection_analysis_results.png)
 
-*Three-panel figure showing: (A) Shannon entropy across RBD positions, (B) conservation percentage, (C) variant diversity. Position 498 shows highest variation (entropy = 1.01).*
+*Three-panel figure showing: (A) Shannon entropy across RBD positions, (B) conservation percentage, (C) variant diversity. Position 497 shows highest variation (entropy = 1.014).*
 
 ---
 
@@ -263,7 +263,7 @@ The Snakemake workflow automates all 10 pipeline steps:
 
 ### Pandemic Preparedness
 - **Early detection** of novel viruses in wildlife reservoirs
-- **Monitoring** evolutionary hotspots (RBD positions 417, 484, 498, 501)
+- **Monitoring** evolutionary hotspots (RBD positions 453, 459, 497, 514)
 - **Risk assessment** for spillover potential from bats to humans
 
 ### Research Applications
@@ -273,7 +273,7 @@ The Snakemake workflow automates all 10 pipeline steps:
 
 ### Key Findings
 1. **Bat reservoir confirmation:** SARS-CoV-2 actively circulating in SE Asian bats
-2. **Evolutionary hotspots:** Position 498 identified before Omicron emergence
+2. **Evolutionary hotspots:** Position 497 identified before Omicron emergence
 3. **Conservation patterns:** 91% RBD conservation reflects functional constraints
 4. **Adaptive evolution:** Variable sites match known variant mutations
 
