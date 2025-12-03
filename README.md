@@ -217,7 +217,7 @@ The Snakemake workflow automates all 10 pipeline steps:
 ### 2. Selection Analysis Results
 ![Selection Analysis](results/phylogenetics/selection_analysis/selection_analysis_results.png)
 
-*Three-panel figure showing: (A) Shannon entropy across RBD positions, (B) conservation percentage, (C) variant diversity. Position 497 shows highest variation (entropy = 1.014).*
+*Three-panel figure showing: (A) Shannon entropy across RBD positions, (B) conservation percentage, (C) variant diversity. Position 179 (RBD coordinate) / Position 497 (spike coordinate) shows highest variation (entropy = 1.014).*
 
 ---
 
