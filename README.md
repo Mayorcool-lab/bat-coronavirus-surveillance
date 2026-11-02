@@ -1,363 +1,564 @@
-# Bat Coronavirus Surveillance Pipeline
+# SARS-CoV-2 Genome Assembly and Evolutionary Analysis Pipeline
 
-**Comprehensive bioinformatics workflow for viral genome assembly, phylogenetic analysis, and evolutionary selection pressure identification from metagenomic sequencing data.**
+**A reproducible bioinformatics workflow for viral genome assembly, phylogenetic reconstruction, and receptor-binding-domain evolutionary variability analysis from public metatranscriptomic sequencing data.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Snakemake](https://img.shields.io/badge/snakemake-≥6.0-brightgreen.svg)](https://snakemake.github.io)
-[![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)]()
-[![Python](https://img.shields.io/badge/Python-3.9-blue.svg)]()
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Snakemake](https://img.shields.io/badge/Snakemake-%E2%89%A56.0-brightgreen.svg)
+![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)
+![Python](https://img.shields.io/badge/Python-3.9-blue.svg)
 
-> 🎯 **Project Goal:** Identify and characterize coronaviruses from bat metagenomic data to support pandemic preparedness and wildlife disease surveillance programs.
+## Project Goal
+
+This project demonstrates a reproducible end-to-end workflow for:
+
+- processing public metatranscriptomic sequencing reads
+- assembling a near-complete SARS-CoV-2 genome
+- annotating viral sequence features
+- reconstructing evolutionary relationships among sarbecoviruses
+- characterising amino-acid variability within the spike receptor-binding domain
+- integrating genomic, phylogenetic, and evolutionary evidence in a reproducible workflow
+
+The workflow is designed as a transferable framework for computational viral genomics, emerging-pathogen analysis, and genomic surveillance research.
 
 ---
 
-## 📊 Key Results Summary
+## Key Results Summary
 
-### Assembly & Identification
-- ✅ **Near-complete SARS-CoV-2 genome** assembled: 26,605 bp (N50 = 26.6 kb)
-- ✅ **Coverage:** 15.8x average depth
-- ✅ **Spike protein:** 100% amino acid identity to SARS-CoV-2 Wuhan reference
-- ✅ **Confirmation:** Bat reservoir in Southeast Asia
+### Genome Assembly and Identification
+
+- **Near-complete SARS-CoV-2 genome assembled:** 26,605 bp
+- **Assembly N50:** 26.6 kb
+- **Average coverage:** 15.8x
+- **Spike protein:** 100% amino-acid identity to the SARS-CoV-2 Wuhan reference sequence
+- **Source dataset:** Early clinical SARS-CoV-2 metatranscriptomic sequencing data from Wuhan, China
 
 ### Phylogenetic Analysis
-- ✅ **Dataset:** 16 sarbecovirus sequences (bat, human, pangolin origins)
-- ✅ **Method:** Maximum likelihood phylogeny (IQ-TREE, 1000 bootstraps)
-- ✅ **Support:** 100% bootstrap support for SARS-CoV-2 clade placement
 
-### Selection Analysis
-- ✅ **RBD conservation:** 91% (203/223 amino acid positions)
-- ✅ **Variable sites identified:** 20 positions (9%)
-- ✅ **Key hotspot:** Position 497 (Shannon entropy = 1.014)
-- ✅ **Validation:** Matches Omicron variant Q498R mutation site
+- **Comparative dataset:** 16 sarbecovirus sequences representing human, bat, and pangolin viruses
+- **Alignment:** MAFFT
+- **Phylogenetic inference:** IQ-TREE maximum likelihood
+- **Bootstrap analysis:** 1,000 ultrafast bootstrap replicates
+- **Outcome:** Reconstruction of evolutionary relationships among SARS-CoV-2 and related sarbecoviruses
 
----
+### RBD Evolutionary Variability
 
-## 🔬 Pipeline Overview
-```
-Raw Reads (SRR10903401)
-    ↓
-Quality Control (FastQC/MultiQC)
-    ↓
-Read Trimming (Trimmomatic)
-    ↓
-Genome Assembly (SPAdes metagenomic)
-    ↓
-Gene Prediction (Prodigal)
-    ↓
-Gene Annotation (DIAMOND BLAST)
-    ↓
-Phylogenetic Analysis (MAFFT + IQ-TREE)
-    ↓
-Selection Analysis (Shannon Entropy)
-    ↓
-Visualization (Matplotlib/Biopython)
-```
+- **RBD conservation:** 91% of analysed positions conserved
+- **Variable positions:** 20 of 223 amino-acid positions
+- **Highest-variability site:** RBD alignment position 179
+- **Current pipeline mapping:** spike position 497
+- **Shannon entropy:** 1.014
+
+This region lies adjacent to the functionally important SARS-CoV-2 spike residue 498, which contains the well-characterised Omicron Q498R substitution. Because the current pipeline reports position 497, exact residue correspondence should be confirmed against the reference-coordinate system before treating the two positions as identical.
+
+The analysis therefore provides a **retrospective comparison with known SARS-CoV-2 evolutionary variation**, rather than a prospective prediction of Omicron mutations.
 
 ---
 
-## 📁 Repository Structure
+## Pipeline Overview
+
+```text
+Raw Reads
+SRR10903401
+        |
+        v
+Quality Control
+FastQC + MultiQC
+        |
+        v
+Read Trimming
+Trimmomatic
+        |
+        v
+Genome Assembly
+SPAdes
+        |
+        v
+Gene Prediction
+Prodigal
+        |
+        v
+Sequence Annotation
+DIAMOND
+        |
+        v
+Multiple Sequence Alignment
+MAFFT
+        |
+        v
+Phylogenetic Reconstruction
+IQ-TREE
+        |
+        v
+RBD Variability Analysis
+Shannon Entropy
+        |
+        v
+Visualisation and Interpretation
+Python + Biopython + Matplotlib
 ```
-bat_viral_pipeline/
+
+---
+
+## Repository Structure
+
+```text
+bat-coronavirus-surveillance/
+|
+├── config/
+|   └── config.yaml
+|
 ├── data/
-│   ├── raw/              # Raw FASTQ files (not in repo - too large)
-│   ├── clean/            # Trimmed reads
-│   └── databases/        # BLAST databases
-│
+|   ├── raw/
+|   ├── clean/
+|   └── databases/
+|
 ├── scripts/
-│   ├── qc/               # Quality control scripts
-│   ├── assembly/         # Genome assembly
-│   ├── annotation/       # Gene prediction & annotation
-│   └── phylogenetics/    # Phylogenetic & selection analysis
-│       └── step9_selection_analysis/  # Detailed selection scripts
-│
+|   ├── download/
+|   ├── qc/
+|   ├── assembly/
+|   ├── annotation/
+|   └── phylogenetics/
+|       └── step9_selection_analysis/
+|
 ├── results/
-│   ├── qc/               # Quality reports
-│   ├── assembly/         # Assembled contigs
-│   ├── annotation/       # Predicted genes & annotations
-│   └── phylogenetics/
-│       └── selection_analysis/  # Trees, figures, reports
-│
-├── docs/                 # Additional documentation
-├── config/               # Configuration files
-├── logs/                 # Log files
-├── workflow/             # Workflow definitions
-├── environment.yml       # Conda environment specification
-└── README.md             # This file
+|   ├── qc/
+|   ├── assembly/
+|   ├── annotation/
+|   └── phylogenetics/
+|       └── selection_analysis/
+|
+├── workflow/
+|
+├── logs/
+|
+├── environment.yml
+├── Snakefile
+└── README.md
 ```
 
 ---
 
-## 🛠️ Tools & Technologies
+## Tools and Technologies
 
-| Category | Tools | Version |
-|----------|-------|---------|
-| **Environment** | Conda | 4.x |
-| **Data Download** | SRA Toolkit | 3.0+ |
-| **Quality Control** | FastQC, MultiQC | 0.11.9, 1.12 |
-| **Read Processing** | Trimmomatic | 0.39 |
-| **Assembly** | SPAdes | 3.15 |
-| **Gene Prediction** | Prodigal | 2.6.3 |
-| **Annotation** | DIAMOND | 2.0 |
-| **Alignment** | MAFFT | 7.490 |
-| **Phylogenetics** | IQ-TREE | 2.0 |
-| **Analysis** | Python, Biopython | 3.9, 1.79 |
-| **Visualization** | Matplotlib, NumPy | 3.5, 1.21 |
+| Category | Tools |
+|---|---|
+| Environment management | Conda |
+| Data retrieval | SRA Toolkit |
+| Quality control | FastQC, MultiQC |
+| Read processing | Trimmomatic |
+| Genome assembly | SPAdes |
+| Gene prediction | Prodigal |
+| Sequence annotation | DIAMOND |
+| Multiple sequence alignment | MAFFT |
+| Phylogenetics | IQ-TREE |
+| Sequence analysis | Python, Biopython |
+| Visualisation | Matplotlib, NumPy |
+| Workflow management | Snakemake |
+| Operating environment | Linux |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Clone Repository
+### 1. Clone the repository
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/bat-coronavirus-surveillance.git
+git clone https://github.com/Mayorcool-lab/bat-coronavirus-surveillance.git
 cd bat-coronavirus-surveillance
 ```
 
-### 2. Setup Conda Environment
+### 2. Create the Conda environment
+
 ```bash
 conda env create -f environment.yml
 conda activate bat_viral
 ```
 
-### 3. Download Sample Data
+### 3. Download the public sequencing dataset
+
 ```bash
-# The pipeline uses SRR10903401 (bat metagenomic sample)
 bash scripts/download/01_download_data.sh
 ```
 
-### 4. Run Complete Pipeline
+The workflow uses:
+
+```text
+SRR10903401
+```
+
+This accession corresponds to early SARS-CoV-2 metatranscriptomic sequencing data from human bronchoalveolar lavage fluid collected from a pneumonia case in Wuhan, China.
+
+### 4. Run the analysis
+
 ```bash
 # Quality control
 bash scripts/qc/02_quality_control.sh
 
-# Assembly
+# Genome assembly
 bash scripts/assembly/04_assemble_genome.sh
 
-# Annotation
+# Gene prediction
 bash scripts/annotation/05_predict_genes.sh
+
+# Sequence annotation
 bash scripts/annotation/06_annotate_genes.sh
 
 # Phylogenetic analysis
 bash scripts/phylogenetics/07_basic_phylogenetics.sh
 
-# Selection analysis (comprehensive)
+# RBD variability analysis
 bash scripts/phylogenetics/step9_selection_analysis/09.8_run_all.sh
 ```
 
 ---
 
-## 📈 Key Visualizations
+## Snakemake Workflow
 
----
+The pipeline is also implemented using Snakemake for reproducible and scalable execution.
 
-## 🐍 Snakemake Workflow
+### Run the complete workflow
 
-This pipeline is available as an automated **Snakemake workflow** for reproducible, scalable execution.
-
-### Quick Run with Snakemake
 ```bash
-# Run entire pipeline with 4 cores
 snakemake --cores 4
+```
 
-# Dry run (see what will execute)
+### Perform a dry run
+
+```bash
 snakemake -n
+```
 
-# Run specific step
-snakemake results/assembly/contigs.fasta --cores 4
+### Generate the workflow DAG
 
-# Generate workflow diagram
+```bash
 snakemake --dag | dot -Tpng > workflow_dag.png
 ```
 
-### Workflow Features
+### Workflow features
 
-- ✅ **Automated dependency management** - Snakemake handles all file dependencies
-- ✅ **Parallel execution** - Multiple steps run simultaneously when possible  
-- ✅ **Resume capability** - Restart from last completed step after interruption
-- ✅ **Cluster ready** - Easy deployment on HPC systems
-- ✅ **Reproducible** - Same inputs always produce same outputs
+- automated dependency management
+- reproducible execution
+- parallelisation of independent steps
+- restart from the last successfully completed step
+- configurable analysis parameters
+- compatibility with Linux and HPC environments
 
-### Configuration
+---
 
-Edit `config/config.yaml` to customize:
-- Sample ID
-- Number of threads
-- Database paths
-- Analysis parameters
+## Configuration
+
+Example `config/config.yaml`:
+
 ```yaml
-# Example config
 sample_id: "SRR10903401"
 threads: 4
 blast_database: "data/databases/viral_proteins"
 ```
 
-### Workflow Steps
+---
 
-The Snakemake workflow automates all 10 pipeline steps:
+## Workflow Steps
 
-1. **download_data** - Fetch raw reads from SRA
-2. **fastqc** - Quality assessment
-3. **multiqc** - Aggregate QC reports
-4. **trim_reads** - Remove adapters and low-quality bases
-5. **assemble_genome** - De novo assembly with SPAdes
-6. **assembly_stats** - Calculate assembly metrics
-7. **predict_genes** - ORF prediction with Prodigal
-8. **annotate_genes** - Homology search with DIAMOND
-9. **phylogenetic_analysis** - Build ML tree with IQ-TREE
-10. **selection_analysis** - Identify sites under selection
+The Snakemake workflow coordinates the following analytical stages:
 
+1. **download_data**  
+   Retrieve public sequencing reads from the Sequence Read Archive.
 
-### 1. Phylogenetic Tree (16 Sequences)
+2. **fastqc**  
+   Assess raw-read quality.
+
+3. **multiqc**  
+   Aggregate quality-control reports.
+
+4. **trim_reads**  
+   Remove adapters and low-quality bases.
+
+5. **assemble_genome**  
+   Perform de novo viral genome assembly.
+
+6. **assembly_stats**  
+   Calculate assembly statistics.
+
+7. **predict_genes**  
+   Identify putative coding sequences.
+
+8. **annotate_genes**  
+   Perform homology-based sequence annotation.
+
+9. **phylogenetic_analysis**  
+   Construct a maximum-likelihood phylogenetic tree.
+
+10. **rbd_variability_analysis**  
+    Quantify amino-acid variability within the receptor-binding domain.
+
+---
+
+## Key Visualisations
+
+### 1. Sarbecovirus Phylogenetic Tree
+
+```markdown
 ![Phylogenetic Tree](results/phylogenetics/selection_analysis/phylogenetic_tree_PROFESSIONAL.png)
+```
 
-*Maximum likelihood phylogenetic tree showing SARS-CoV-2 clustering with bat sample from Southeast Asia. Bootstrap support values indicate 100% confidence.*
+The maximum-likelihood phylogeny compares 16 sarbecovirus sequences from human, bat, and pangolin hosts and illustrates the evolutionary placement of SARS-CoV-2 relative to closely related viruses.
 
----
+### 2. RBD Variability Analysis
 
-### 2. Selection Analysis Results
-![Selection Analysis](results/phylogenetics/selection_analysis/selection_analysis_results.png)
+```markdown
+![RBD Variability](results/phylogenetics/selection_analysis/selection_analysis_results.png)
+```
 
-*Three-panel figure showing: (A) Shannon entropy across RBD positions, (B) conservation percentage, (C) variant diversity. Position 179 (RBD coordinate) / Position 497 (spike coordinate) shows highest variation (entropy = 1.014).*
+The figure summarises:
 
----
+- Shannon entropy across RBD positions
+- amino-acid conservation
+- sequence variability
+- distribution of variable residues across the analysed RBD alignment
+
+RBD alignment position 179 showed the highest variability in the current analysis.
 
 ### 3. RBD Alignment Heatmap
-![RBD Heatmap](results/phylogenetics/selection_analysis/rbd_alignment_heatmap.png)
 
-*Amino acid alignment heatmap across 16 sequences showing conservation patterns in the receptor binding domain (223 amino acids).*
+```markdown
+![RBD Alignment Heatmap](results/phylogenetics/selection_analysis/rbd_alignment_heatmap.png)
+```
 
----
-
-## 📄 Detailed Methods
-
-### Sample Information
-- **Accession ID:** SRR10903401
-- **Source:** Bat fecal sample (metagenomic)
-- **Geographic Origin:** Southeast Asia (Thailand-Myanmar border)
-- **Sequencing:** Illumina paired-end, 150 bp reads
-- **Read Count:** ~500,000 reads
-- **Data Size:** ~300 MB (compressed)
-
-### Assembly Approach
-- **Tool:** SPAdes v3.15 (metagenomic mode)
-- **K-mer sizes:** 21, 33, 55, 77
-- **Coverage cutoff:** Auto
-- **Result:** Main contig 26,605 bp (89% genome completeness)
-
-### Phylogenetic Methods
-- **Alignment:** MAFFT (auto mode, default parameters)
-- **Model Selection:** IQ-TREE ModelFinder (selected Blosum62+F+G4)
-- **Tree Inference:** Maximum likelihood
-- **Bootstrap:** 1000 ultrafast bootstrap replicates
-- **Validation:** 100% support for all major clades
-
-### Selection Analysis
-- **Method:** Shannon entropy calculation per amino acid position
-- **Formula:** H = -Σ(p_i × log₂(p_i))
-- **Interpretation:** H > 1.5 = high variation, potential positive selection
-- **Validation:** Comparison with known SARS-CoV-2 variant mutations
+The heatmap displays amino-acid conservation and variability across the 16 sarbecovirus sequences included in the comparative dataset.
 
 ---
 
-## 🎯 Applications & Relevance
+## Dataset
 
-### Pandemic Preparedness
-- **Early detection** of novel viruses in wildlife reservoirs
-- **Monitoring** evolutionary hotspots (RBD positions 453, 459, 497, 514)
-- **Risk assessment** for spillover potential from bats to humans
+### Primary sequencing dataset
 
-### Research Applications
-- Reproducible workflow for viral surveillance programs
-- Template pipeline for coronavirus metagenomic analysis
-- Educational resource for bioinformatics training
+- **Accession:** SRR10903401
+- **Material:** Human bronchoalveolar lavage fluid
+- **Sequencing approach:** Metatranscriptomic RNA sequencing
+- **Clinical context:** Pneumonia case from Wuhan, China
+- **Period:** December 2019
+- **Sequencing:** Illumina paired-end reads
 
-### Key Findings
-1. **Bat reservoir confirmation:** SARS-CoV-2 actively circulating in SE Asian bats
-2. **Evolutionary hotspots:** Position 497 identified before Omicron emergence
-3. **Conservation patterns:** 91% RBD conservation reflects functional constraints
-4. **Adaptive evolution:** Variable sites match known variant mutations
+The dataset originates from the early genomic characterisation of SARS-CoV-2.
 
----
+### Comparative phylogenetic dataset
 
-## ⏱️ Performance Metrics
+The phylogenetic component includes 16 sarbecovirus sequences representing:
 
-| Step | Time | Resources |
-|------|------|-----------|
-| Data Download | ~10 min | Network dependent |
-| Quality Control | ~5 min | 1 CPU, 2GB RAM |
-| Read Trimming | ~10 min | 4 CPUs, 4GB RAM |
-| Assembly | ~30 min | 4 CPUs, 16GB RAM |
-| Annotation | ~5 min | 4 CPUs, 8GB RAM |
-| Phylogenetics | ~2 min | 4 CPUs, 4GB RAM |
-| Selection Analysis | ~5 min | 4 CPUs, 4GB RAM |
-| **Total Pipeline** | **~70 min** | Parallelizable |
+- human SARS-CoV-2
+- related bat coronaviruses
+- pangolin coronaviruses
+
+Reference sequences were obtained from public sequence databases.
 
 ---
 
-## 📚 Key Publications & References
+## Genome Assembly
 
-### Methodological References
-- **SPAdes Assembly:** Bankevich et al. (2012). *Journal of Computational Biology*
-- **IQ-TREE:** Nguyen et al. (2015). *Molecular Biology and Evolution*
-- **MAFFT Alignment:** Katoh & Standley (2013). *Molecular Biology and Evolution*
+The sequencing reads were assembled using SPAdes in metagenomic mode.
 
-### Biological Context
-- **SARS-CoV-2 Origin:** Zhou et al. (2020). *Nature*. Discovery paper
-- **RBD Evolution:** Starr et al. (2020). *Cell*. Deep mutational scanning
-- **Variant Tracking:** WHO (2023). SARS-CoV-2 variant classification
+### Parameters
+
+- k-mer sizes: 21, 33, 55, 77
+- coverage cutoff: automatic
+- principal assembled viral contig: 26,605 bp
+- estimated genome completeness: approximately 89%
+
+The resulting sequence was subsequently used for annotation and comparative evolutionary analysis.
 
 ---
 
-## 👤 Author
+## Phylogenetic Analysis
+
+### Multiple sequence alignment
+
+MAFFT was used to align the comparative sarbecovirus sequence dataset.
+
+### Model selection
+
+IQ-TREE ModelFinder was used to identify an appropriate substitution model.
+
+### Tree inference
+
+Maximum-likelihood phylogenetic reconstruction was performed using IQ-TREE with:
+
+```text
+1,000 ultrafast bootstrap replicates
+```
+
+The resulting tree was used to examine the evolutionary relationship between SARS-CoV-2 and related sarbecoviruses.
+
+---
+
+## RBD Evolutionary Variability Analysis
+
+Amino-acid variability was quantified for each position in the spike receptor-binding-domain alignment using Shannon entropy:
+
+```text
+H = -Σ p(i) log2 p(i)
+```
+
+where `p(i)` represents the frequency of each amino acid observed at a given alignment position.
+
+Higher entropy indicates greater amino-acid variability across the comparative sequence dataset.
+
+This analysis identifies **variable evolutionary positions**, but Shannon entropy alone should not be interpreted as formal evidence of positive selection.
+
+Formal positive-selection analysis would require methods such as:
+
+- dN/dS-based models
+- FEL
+- MEME
+- FUBAR
+- branch-site models
+
+The current analysis should therefore be described as **evolutionary variability analysis** rather than formal positive-selection testing.
+
+---
+
+## Biological Interpretation
+
+The receptor-binding domain of the SARS-CoV-2 spike protein is highly conserved across related sarbecoviruses, reflecting strong functional constraints associated with host-receptor interaction.
+
+At the same time, a subset of residues displays increased variability.
+
+The current analysis identified RBD alignment position 179, mapped to spike position 497 in the pipeline output, as the most variable site in the analysed sequence panel.
+
+This region lies immediately adjacent to spike residue 498, a functionally important receptor-binding position where the Omicron lineage acquired the Q498R substitution.
+
+The comparison is retrospective and illustrates how comparative sequence analysis can highlight variable regions of biological interest.
+
+---
+
+## Applications
+
+### Viral genomics
+
+The workflow demonstrates reproducible processing of public viral sequencing data from raw reads through genome reconstruction and evolutionary interpretation.
+
+### Genomic surveillance
+
+The pipeline architecture can be adapted to surveillance datasets containing newly emerging viral genomes.
+
+### Comparative viral evolution
+
+The phylogenetic and sequence-variability components support comparison of related viral lineages and identification of regions with elevated evolutionary variability.
+
+### Emerging pathogen research
+
+The workflow provides a computational framework that can be extended to additional viral pathogens and larger genomic surveillance datasets.
+
+---
+
+## Limitations
+
+This project should be interpreted as a reproducible computational demonstration rather than a comprehensive epidemiological surveillance study.
+
+Important limitations include:
+
+- only one primary raw sequencing accession was used for genome reconstruction
+- the comparative phylogenetic dataset contains 16 sequences
+- Shannon entropy measures sequence variability but does not directly test positive selection
+- residue numbering may differ depending on alignment and reference-coordinate conventions
+- no direct epidemiological modelling was performed
+- no experimental validation of predicted functional effects was conducted
+
+These limitations should be considered when interpreting the evolutionary results.
+
+---
+
+## Reproducibility
+
+The project was designed to support transparent and reproducible analysis through:
+
+- Snakemake workflow orchestration
+- Conda environment management
+- configuration-driven parameters
+- version-controlled scripts
+- documented analytical outputs
+- public sequencing data
+- explicit intermediate results
+
+The same workflow can be rerun or adapted to additional viral datasets.
+
+---
+
+## Research Relevance
+
+This project demonstrates transferable computational capabilities in:
+
+- viral genome assembly
+- genomic data processing
+- phylogenetic reconstruction
+- comparative genomics
+- evolutionary sequence analysis
+- reproducible workflow development
+- scientific interpretation of viral sequence variation
+
+These approaches are relevant to computational research on emerging viral lineages, pathogen evolution, genomic surveillance, and phenotype-associated viral mutations.
+
+---
+
+## References
+
+### Data source
+
+Wu F. et al.  
+*A new coronavirus associated with human respiratory disease in China.*  
+Nature. 2020.
+
+### Methods
+
+Bankevich A. et al.  
+SPAdes: A New Genome Assembly Algorithm and Its Applications to Single-Cell Sequencing.  
+Journal of Computational Biology. 2012.
+
+Nguyen LT. et al.  
+IQ-TREE: A Fast and Effective Stochastic Algorithm for Estimating Maximum-Likelihood Phylogenies.  
+Molecular Biology and Evolution. 2015.
+
+Katoh K., Standley DM.  
+MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability.  
+Molecular Biology and Evolution. 2013.
+
+### Biological context
+
+Starr TN. et al.  
+Deep Mutational Scanning of SARS-CoV-2 Receptor Binding Domain Reveals Constraints on Folding and ACE2 Binding.  
+Cell. 2020.
+
+---
+
+## Author
 
 **Dr. Oluwamayowa Joshua Ogun**
-- **Date:** November 2025
+
+Animal Geneticist and Computational Biologist
+
+GitHub: [Mayorcool-lab](https://github.com/Mayorcool-lab)
+
+LinkedIn: [Oluwamayowa Ogun](https://www.linkedin.com/in/oluwamayowaogun)
 
 ---
 
-## 📝 License
+## Citation
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+If you use or adapt this workflow, please cite:
 
----
-
-## 🙏 Acknowledgments
-
-- **Data Source:** NCBI Sequence Read Archive (SRR10903401)
-- **Reference Sequences:** GenBank/GISAID databases
-- **Software:** Open-source bioinformatics community
-
----
-
-## 📮 Citation
-
-If you use this pipeline in your research, please cite:
-```
-Ogun, O.J. (2025). Bat Coronavirus Surveillance Pipeline: 
-Comprehensive workflow for viral genome assembly and evolutionary analysis.
-GitHub: https://github.com/YOUR_USERNAME/bat-coronavirus-surveillance
+```text
+Ogun, O.J. (2025).
+SARS-CoV-2 Genome Assembly and Evolutionary Analysis Pipeline.
+GitHub: https://github.com/Mayorcool-lab/bat-coronavirus-surveillance
 ```
 
 ---
 
-## 📞 Contact & Support
+## License
 
-For questions about this pipeline or collaboration opportunities:
-- Open an issue on GitHub
-- Connect via LinkedIn
+This project is released under the MIT License.
 
 ---
 
-## 🔄 Version History
+**Initial release:** November 2025
 
-- **v1.0** (November 2025) - Initial release
-  - Complete assembly to selection analysis pipeline
-  - 16-sequence phylogenetic analysis
-  - Publication-quality visualizations
-  - Comprehensive documentation
-
----
-
-**Last Updated:** November 13, 2025
-
-**Status:** ✅ Complete & Production-Ready
+**Status:** Complete reproducible research workflow
