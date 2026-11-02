@@ -297,17 +297,13 @@ The Snakemake workflow coordinates the following analytical stages:
 
 ### 1. Sarbecovirus Phylogenetic Tree
 
-```markdown
 ![Phylogenetic Tree](results/phylogenetics/selection_analysis/phylogenetic_tree_PROFESSIONAL.png)
-```
 
 The maximum-likelihood phylogeny compares 16 sarbecovirus sequences from human, bat, and pangolin hosts and illustrates the evolutionary placement of SARS-CoV-2 relative to closely related viruses.
 
 ### 2. RBD Variability Analysis
 
-```markdown
 ![RBD Variability](results/phylogenetics/selection_analysis/selection_analysis_results.png)
-```
 
 The figure summarises:
 
@@ -320,12 +316,9 @@ RBD alignment position 179 showed the highest variability in the current analysi
 
 ### 3. RBD Alignment Heatmap
 
-```markdown
 ![RBD Alignment Heatmap](results/phylogenetics/selection_analysis/rbd_alignment_heatmap.png)
-```
 
 The heatmap displays amino-acid conservation and variability across the 16 sarbecovirus sequences included in the comparative dataset.
-
 ---
 
 ## Dataset
